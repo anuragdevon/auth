@@ -14,7 +14,11 @@ import (
 
 type AuthService struct {
 	db  *gorm.DB
-	Jwt utils.JwtWrapper
+	jwt utils.JwtWrapper
+}
+
+func NewAuthService(db *gorm.DB, jwt utils.JwtWrapper) *AuthService {
+	return &AuthService{db: db, jwt: jwt}
 }
 
 func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
@@ -69,7 +73,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		}, nil
 	}
 
-	token, _ := as.Jwt.GenerateToken(user)
+	token, _ := as.jwt.GenerateToken(user)
 
 	return &pb.LoginResponse{
 		Status: http.StatusOK,
@@ -79,7 +83,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 
 func (as *AuthService) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 	db := repository.Database{DB: as.db}
-	claims, err := as.Jwt.ValidateToken(req.Token)
+	claims, err := as.jwt.ValidateToken(req.Token)
 
 	if err != nil {
 		return &pb.ValidateResponse{

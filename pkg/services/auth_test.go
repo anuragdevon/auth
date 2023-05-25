@@ -14,7 +14,7 @@ import (
 func TestAuthService_Register(t *testing.T) {
 	authService := &AuthService{
 		db:  db.DB,
-		Jwt: utils.JwtWrapper{},
+		jwt: utils.JwtWrapper{},
 	}
 	t.Run("Register method to return StatusCreated a new user with valid usertype", func(t *testing.T) {
 		registerReq := &pb.RegisterRequest{
@@ -49,7 +49,7 @@ func TestAuthService_Register(t *testing.T) {
 func TestAuthService_Login(t *testing.T) {
 	authService := &AuthService{
 		db:  db.DB,
-		Jwt: utils.JwtWrapper{},
+		jwt: utils.JwtWrapper{},
 	}
 	t.Run("Login method to return StatusOK and a valid token for valid credentials ", func(t *testing.T) {
 		user := models.User{
@@ -85,7 +85,7 @@ func TestAuthService_Login(t *testing.T) {
 func TestAuthService_Validate(t *testing.T) {
 	authService := &AuthService{
 		db:  db.DB,
-		Jwt: utils.JwtWrapper{},
+		jwt: utils.JwtWrapper{},
 	}
 
 	t.Run("Validate method with a valid token should return StatusOK and the user details", func(t *testing.T) {
@@ -96,7 +96,7 @@ func TestAuthService_Validate(t *testing.T) {
 		_, err := db.CreateUser(&user)
 		assert.NoError(t, err)
 
-		token, err := authService.Jwt.GenerateToken(user)
+		token, err := authService.jwt.GenerateToken(user)
 		assert.NoError(t, err)
 
 		validateReq := &pb.ValidateRequest{
@@ -124,7 +124,7 @@ func TestAuthService_Validate(t *testing.T) {
 			Email:    "other@example.com",
 			Password: utils.HashPassword("password456"),
 		}
-		token, err := authService.Jwt.GenerateToken(otherUser)
+		token, err := authService.jwt.GenerateToken(otherUser)
 		assert.NoError(t, err)
 
 		validateReq := &pb.ValidateRequest{
