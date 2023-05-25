@@ -1,8 +1,8 @@
 package models
 
 type User struct {
-	Id       int64  `gorm:"primaryKey"`
-	Email    string `gorm:"unique"`
-	Password string `gorm:"column:password"`
-	Usertype string `gorm:"column:usertype"`
+	Id       int64  `gorm:"column:email;primaryKey"`
+	Email    string `gorm:"column:email;not null;unique"`
+	Password string `gorm:"column:password;not null"`
+	Usertype string `gorm:"column:usertype;not null"`
 }
