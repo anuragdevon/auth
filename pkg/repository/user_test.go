@@ -12,6 +12,7 @@ func TestUser(t *testing.T) {
 		user := &models.User{
 			Email:    "test@example.com",
 			Password: "test123",
+			Usertype: "ADMIN",
 		}
 		userID, err := db.CreateUser(user)
 		if err != nil {
@@ -27,6 +28,7 @@ func TestUser(t *testing.T) {
 		user := &models.User{
 			Email:    "anuragkar1@gmail.com",
 			Password: "password123",
+			Usertype: "CUSTOMER",
 		}
 
 		_, err := db.CreateUser(user)
@@ -34,9 +36,11 @@ func TestUser(t *testing.T) {
 			t.Fatalf("Failed to create user: %v", err)
 		}
 
+		// TODO: New Testcase and check for CUSTOMER AND ADMIN FOR SAME EMAILD
 		duplicateUser := &models.User{
 			Email:    "anuragkar1@gmail.com",
 			Password: "password456",
+			Usertype: "CUSTOMER",
 		}
 
 		userId, err := db.CreateUser(duplicateUser)
@@ -48,6 +52,7 @@ func TestUser(t *testing.T) {
 		user := &models.User{
 			Email:    "test4@example.com",
 			Password: "test123",
+			Usertype: "CUSTOMER",
 		}
 		userID, err := db.CreateUser(user)
 		if err != nil {
@@ -67,7 +72,8 @@ func TestUser(t *testing.T) {
 	t.Run("GetUserByEmail method to return valid user for valid emailID", func(t *testing.T) {
 		userEmail := "testuser99@example.com"
 		userPassword := "password123"
-		userID, err := db.CreateUser(&models.User{Email: userEmail, Password: userPassword})
+		usertype:= "CUSTOMER"
+		userID, err := db.CreateUser(&models.User{Email: userEmail, Password: userPassword, Usertype: usertype})
 		if err != nil {
 			t.Fatalf("failed to create test user: %v", err)
 		}
