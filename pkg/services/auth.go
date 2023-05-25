@@ -15,10 +15,15 @@ import (
 type AuthService struct {
 	db  *gorm.DB
 	jwt utils.JwtWrapper
+	pb.UnimplementedAuthServiceServer
 }
 
 func NewAuthService(db *gorm.DB, jwt utils.JwtWrapper) *AuthService {
-	return &AuthService{db: db, jwt: jwt}
+	return &AuthService{
+		db:                             db,
+		jwt:                            jwt,
+		UnimplementedAuthServiceServer: pb.UnimplementedAuthServiceServer{},
+	}
 }
 
 func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
