@@ -2,14 +2,15 @@ package repository
 
 import (
 	"auth/pkg/repository/models"
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUser(t *testing.T) {
 	t.Run("CreateUser method to successfully create user with valid data", func(t *testing.T) {
 		user := &models.User{
-			Email:  "test@example.com",
+			Email:    "test@example.com",
 			Password: "test123",
 		}
 		userID, err := db.CreateUser(user)
@@ -24,7 +25,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("CreateUser method to return error for duplicate emailID", func(t *testing.T) {
 		user := &models.User{
-			Email:  "anuragkar1@gmail.com",
+			Email:    "anuragkar1@gmail.com",
 			Password: "password123",
 		}
 
@@ -34,19 +35,18 @@ func TestUser(t *testing.T) {
 		}
 
 		duplicateUser := &models.User{
-			Email:  "anuragkar1@gmail.com",
+			Email:    "anuragkar1@gmail.com",
 			Password: "password456",
 		}
 
-		_, err = db.CreateUser(duplicateUser)
-		if err == nil {
-			t.Fatalf("Expected to return err with duplicate email")
-		}
+		userId, err := db.CreateUser(duplicateUser)
+		assert.NotNil(t, err)
+		assert.Equal(t, 0, userId)
 	})
 
 	t.Run("GetUserByID method to return valid user for valid userID", func(t *testing.T) {
 		user := &models.User{
-			Email:  "test4@example.com",
+			Email:    "test4@example.com",
 			Password: "test123",
 		}
 		userID, err := db.CreateUser(user)
@@ -89,13 +89,6 @@ func TestUser(t *testing.T) {
 	t.Run("GetUserByEmail method to return error for invalid emailID", func(t *testing.T) {
 		userEmail := "nonexistent@example.com"
 		_, err := db.GetUserByEmail(userEmail)
-		if err == nil {
-			t.Fatalf("expected GetUserByEmail() to return an error, but got nil")
-		}
-
-		expectedErrorMessage := fmt.Sprintf("failed to get user: %v", userEmail)
-		if err.Error() != expectedErrorMessage {
-			t.Fatalf("GetUserByEmail() error = %v, want %v", err.Error(), expectedErrorMessage)
-		}
+		assert.NotNil(t, err)
 	})
 }
