@@ -25,7 +25,7 @@ func (db *Database) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	result := db.DB.Where("email = ?", email).First(&user)
 	if result.Error != nil {
-		return nil, result.Error
+		return &models.User{}, result.Error
 	}
 	return &user, nil
 }

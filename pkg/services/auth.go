@@ -57,19 +57,23 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 }
 
 func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	var user models.User
-
 	db := repository.Database{DB: as.db}
-	_, err := db.GetUserByEmail(req.Email)
+	user, _ := db.GetUserByEmail(req.Email)
 
-	if err == nil {
-		return &pb.LoginResponse{
-			Status: http.StatusNotFound,
-			Error:  "no user found with email",
-		}, nil
-	}
+	// if user {
+	// 	return &pb.LoginResponse{
+	// 		Status: http.StatusNotFound,
+	// 		Error:  "no user found with email",
+	// 	}, nil
+	// }
+	// if err != nil {
+	// 	return &pb.LoginResponse{
+	// 		Status: http.StatusNotFound,
+	// 		Error:  "no user found with email",
+	// 	}, nil
+	// }
 
-	match := utils.CheckPasswordHash(req.Password, user.Password)
+	match := utils.CheckPasswordHash(user.Password, req.Password)
 
 	if !match {
 		return &pb.LoginResponse{
@@ -78,7 +82,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		}, nil
 	}
 
-	token, _ := as.jwt.GenerateToken(user)
+	token, _ := as.jwt.GenerateToken(*user)
 
 	return &pb.LoginResponse{
 		Status: http.StatusOK,
@@ -97,13 +101,13 @@ func (as *AuthService) Validate(ctx context.Context, req *pb.ValidateRequest) (*
 		}, nil
 	}
 
-	user, err := db.GetUserByEmail(claims.Email)
-	if err != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusNotFound,
-			Error:  "user not found",
-		}, nil
-	}
+	user, _ := db.GetUserByEmail(claims.Email)
+	// if err != nil {
+	// 	return &pb.ValidateResponse{
+	// 		Status: http.StatusNotFound,
+	// 		Error:  "user not found",
+	// 	}, nil
+	// }
 	userType := pb.UserType_CUSTOMER
 	if user.Usertype == "ADMIN" {
 		userType = pb.UserType_ADMIN
