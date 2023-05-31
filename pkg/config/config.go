@@ -3,25 +3,28 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-    Port         string `mapstructure:"PORT"`
-    DBUrl        string `mapstructure:"DB_URL"`
-    JWTSecretKey string `mapstructure:"JWT_SECRET_KEY"`
+	Port         string `mapstructure:"PORT"`
+	DBUrl        string `mapstructure:"DB_URL"`
+	JWTSecretKey string `mapstructure:"JWT_SECRET_KEY"`
+	DbUser       string `mapstructure:"DB_USER"`
+	DbPassword   string `mapstructure:"DB_PASSWORD"`
+	DbName       string `mapstructure:"DB_NAME"`
 }
 
 func LoadConfig() (config Config, err error) {
-    viper.AddConfigPath("./pkg/config/envs")
-    viper.SetConfigName("dev")
-    viper.SetConfigType("env")
+	viper.AddConfigPath("/home/anurag/docs/swiggy/auth/pkg/config/envs")
+	viper.SetConfigName("dev")
+	viper.SetConfigType("env")
 
-    viper.AutomaticEnv()
+	viper.AutomaticEnv()
 
-    err = viper.ReadInConfig()
+	err = viper.ReadInConfig()
 
-    if err != nil {
-        return
-    }
+	if err != nil {
+		return
+	}
 
-    err = viper.Unmarshal(&config)
+	err = viper.Unmarshal(&config)
 
-    return
+	return
 }
