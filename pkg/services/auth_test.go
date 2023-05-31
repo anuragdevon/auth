@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAuthService_Register(t *testing.T) {
+func TestAuthService(t *testing.T) {
 	authService := &AuthService{
 		db:  db.DB,
 		jwt: utils.JwtWrapper{},
@@ -44,13 +44,7 @@ func TestAuthService_Register(t *testing.T) {
 		assert.Equal(t, int64(http.StatusConflict), registerRes.Status)
 		assert.Equal(t, "email already registered", registerRes.Error)
 	})
-}
 
-func TestAuthService_Login(t *testing.T) {
-	authService := &AuthService{
-		db:  db.DB,
-		jwt: utils.JwtWrapper{},
-	}
 	t.Run("Login method to return StatusOK and a valid token for valid credentials ", func(t *testing.T) {
 		user := models.User{
 			Email:    "testlogin1@example.com",
@@ -80,13 +74,6 @@ func TestAuthService_Login(t *testing.T) {
 		assert.Equal(t, int64(http.StatusUnauthorized), loginRes.Status)
 		assert.Equal(t, "invalid login credentials", loginRes.Error)
 	})
-}
-
-func TestAuthService_Validate(t *testing.T) {
-	authService := &AuthService{
-		db:  db.DB,
-		jwt: utils.JwtWrapper{},
-	}
 
 	t.Run("Validate method with a valid token should return StatusOK and the user details", func(t *testing.T) {
 		user := models.User{
