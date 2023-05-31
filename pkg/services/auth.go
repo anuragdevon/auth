@@ -58,20 +58,14 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 
 func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	db := repository.Database{DB: as.db}
-	user, _ := db.GetUserByEmail(req.Email)
+	user, err := db.GetUserByEmail(req.Email)
 
-	// if user {
-	// 	return &pb.LoginResponse{
-	// 		Status: http.StatusNotFound,
-	// 		Error:  "no user found with email",
-	// 	}, nil
-	// }
-	// if err != nil {
-	// 	return &pb.LoginResponse{
-	// 		Status: http.StatusNotFound,
-	// 		Error:  "no user found with email",
-	// 	}, nil
-	// }
+	if err != nil {
+		return &pb.LoginResponse{
+			Status: http.StatusNotFound,
+			Error:  "no user found with email",
+		}, nil
+	}
 
 	match := utils.CheckPasswordHash(user.Password, req.Password)
 
@@ -101,13 +95,13 @@ func (as *AuthService) Validate(ctx context.Context, req *pb.ValidateRequest) (*
 		}, nil
 	}
 
-	user, _ := db.GetUserByEmail(claims.Email)
-	// if err != nil {
-	// 	return &pb.ValidateResponse{
-	// 		Status: http.StatusNotFound,
-	// 		Error:  "user not found",
-	// 	}, nil
-	// }
+	user, err := db.GetUserByEmail(claims.Email)
+	if err != nil {
+		return &pb.ValidateResponse{
+			Status: http.StatusNotFound,
+			Error:  "user not found",
+		}, nil
+	}
 	userType := pb.UserType_CUSTOMER
 	if user.Usertype == "ADMIN" {
 		userType = pb.UserType_ADMIN

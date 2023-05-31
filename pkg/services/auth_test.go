@@ -28,20 +28,20 @@ func TestAuthService_Register(t *testing.T) {
 	})
 	t.Run("Register method with an existing email should return StatusConflict", func(t *testing.T) {
 		existingUser := models.User{
-			Email:    "testregister1@example.com",
+			Email:    "testregister2@example.com",
 			Password: utils.HashPassword("password456"),
 		}
 		_, err := db.CreateUser(&existingUser)
 		assert.NoError(t, err)
 
 		registerReq := &pb.RegisterRequest{
-			Email:    "testregister1@example.com",
+			Email:    "testregister2@example.com",
 			Password: "password789",
 			UserType: pb.UserType_CUSTOMER,
 		}
 		registerRes, err := authService.Register(context.Background(), registerReq)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusConflict, registerRes.Status)
+		assert.Equal(t, int64(http.StatusConflict), registerRes.Status)
 		assert.Equal(t, "email already registered", registerRes.Error)
 	})
 }
@@ -104,7 +104,7 @@ func TestAuthService_Validate(t *testing.T) {
 		}
 		validateRes, err := authService.Validate(context.Background(), validateReq)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusOK, validateRes.Status)
+		assert.Equal(t, int64(http.StatusOK), validateRes.Status)
 		assert.Equal(t, user.Id, validateRes.UserId)
 		assert.Equal(t, pb.UserType_CUSTOMER, validateRes.UserType)
 	})
@@ -115,7 +115,7 @@ func TestAuthService_Validate(t *testing.T) {
 		}
 		validateRes, err := authService.Validate(context.Background(), validateReq)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusBadRequest, validateRes.Status)
+		assert.Equal(t, int64(http.StatusBadRequest), validateRes.Status)
 		assert.NotEmpty(t, validateRes.Error)
 	})
 
@@ -132,7 +132,7 @@ func TestAuthService_Validate(t *testing.T) {
 		}
 		validateRes, err := authService.Validate(context.Background(), validateReq)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusNotFound, validateRes.Status)
+		assert.Equal(t, int64(http.StatusNotFound), validateRes.Status)
 		assert.Equal(t, "user not found", validateRes.Error)
 	})
 }
