@@ -45,6 +45,18 @@ func TestAuthService(t *testing.T) {
 		assert.Equal(t, "email already registered", registerRes.Error)
 	})
 
+	t.Run("Register method with invalid user type should return BadRequest", func(t *testing.T) {
+		registerReq := &pb.RegisterRequest{
+			Email:    "testregister3@example.com",
+			Password: "password123",
+			UserType: pb.UserType(-1),
+		}
+		registerRes, err := authService.Register(context.Background(), registerReq)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(http.StatusBadRequest), registerRes.Status)
+		assert.Equal(t, "invalid user type", registerRes.Error)
+	})
+
 	t.Run("Login method to return StatusOK and a valid token for valid credentials ", func(t *testing.T) {
 		user := models.User{
 			Email:    "testlogin1@example.com",

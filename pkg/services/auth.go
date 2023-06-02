@@ -41,6 +41,14 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 
 	user.Email = req.Email
 	user.Password = utils.HashPassword(req.Password)
+
+	if !utils.IsValidUserType(req.UserType) {
+		return &pb.RegisterResponse{
+			Status: http.StatusBadRequest,
+			Error:  "invalid user type",
+		}, nil
+	}
+
 	user.Usertype = req.UserType.String()
 
 	_, err = db.CreateUser(&user)
